@@ -1,0 +1,35 @@
+name: Descargar Datos de Desempleo Ecuador
+
+on:
+  push:
+    paths:
+      - 'trigger_update.txt'  # Se activará solo cuando este archivo cambie
+
+jobs:
+  descargar-datos:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v3
+      
+      - name: Configurar R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.2.0'
+      
+      - name: Instalar dependencias
+        run: |
+          R -e 'install.packages(c("jsonlite", "dplyr", "httr"), repos = "https://cloud.r-project.org")'
+      
+      - name: Ejecutar script R de descarga de datos
+        run: |
+          Rscript scripts/descargar_desempleo.R
+      
+      - name: Confirmar y publicar los datos actualizados
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add datos/
+          git commit -m "Actualizar datos de desempleo [Actualización automática]" || echo "No hay cambios que confirmar"
+          git push
