@@ -1,6 +1,13 @@
 # Script para descargar datos de tasa de desempleo nacional de Ecuador
 # Este script será ejecutado por el GitHub Action
 
+if (!require("dplyr")) install.packages("dplyr")
+library(dplyr)
+
+if (!require("httr")) install.packages("httr", repos = "https://cloud.r-project.org")
+library(httr)
+
+
 # Cargar librerías necesarias
 library(jsonlite)
 library(dplyr)
